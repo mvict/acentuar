@@ -6,6 +6,7 @@ import nltk
 # todo replace pyphen with another library
 # todo: think of a way to handle two vowels together and diptongues
 # todo write unittest
+# todo debug why experiencia is seen as esdrújula
 
 # https://pyphen.org/
 # pip install pyphen
@@ -27,11 +28,13 @@ SYLLABIZATION_ERROR = "Something went wrong with Pyphen"
 DICTIONARY = {"jamón": 1, "bolígrafo": 3, "esdrújula": 3, "salón": 1, "melón": 1, "excursión": 1,
               "césped": 2, "perro": 2, "gato": 2, "perdiz": 1, "equipo": 2
               }
-
+# WORDS_BAG = {"ejercicio"}
 WORDS_BAG = ["abarrotado", "colombia", "mueve", "abarrotes", "comadreja", "nubes", "abasto",
              "come", "nublado", "abeja", "como", "piojos", "pacto", "canal", "pactar", "sentir",
              "onomatopeya", "escabroso", "viernes", "jueves", "ejercicio", "deberes", "comiendo",
              "experiencia", "jaleo", "resumen", "volumen", "carmen", "bote", "rompe", "romper"]
+
+ACCENT_WORD = {"1": "aguda", "2": "llana",  "3": "esdrújula"}
 
 
 class Word:
@@ -89,26 +92,14 @@ class Word:
                 return True
         return False
 
-    # this version of _determine_type looks better
-    # but is less efficient, because all functions used in is_llana
-    # are repeated later in is_aguda
-    #
-    # def _determine_type(self):
-    #     if self._is_llana():
-    #         return "llana"
-    #     elif self._is_aguda():
-    #         return "aguda"
-    #     elif self._is_esdrujula():
-    #         return "esdrújula"
-    #     else:
-    #         return "no lo sé"
-
     def _determine_type(self):
+        '''determines the word type based on its written form'''
+
         to_return = "No lo sé"
 
         # if word is esdrujula
         if self._length >= 3 and self._is_esdrujula:
-                to_return = "esdrújula"
+            to_return = "esdrújula"
 
         # If words ends with vowel
         # example >> canto
@@ -156,14 +147,9 @@ class AccentRules():
 
         if heard_accent == "0":
             print(self._explanation_about_accents())
-        if heard_accent == "1":
-            self._estimated_type = 'aguda'
-        if heard_accent == "2":
-            self._estimated_type = 'llana'
-        if heard_accent == "3":
-            self._estimated_type = 'esdrújula'
-
-        # self.processed_word = self._determine_accent()
+        else:
+            # user input is 1, 2 or 3
+            self._estimated_type = ACCENT_WORD[heard_accent]
 
     def _explanation_about_accents(self):
         return "big explanation about how the Spanish accent system works"
@@ -183,28 +169,39 @@ class AccentRules():
         except IndexError:
             print(SYLLABIZATION_ERROR)
 
-    def _determine_accent(self):
+    def _determine_written_accent(self):
+        '''determines if an accent should be written based on where the user hears the word emphasis'''
         message = "I don't know yet"
+        # syllable, write or not, new word
+        advice = ("", False, "0")
+
         if self._estimated_type == 'esdrújula':
-            message = f"\nYes, write an accent in the third syllable counting from behind: {self._write_accent(3)}"
-            # print(self._write_accent(-3))
+            advice = ('3', True, self._write_accent(3))
 
         elif self._estimated_type == 'aguda':
            if self.w.ends_with_vowel() or self.w.ends_with_n_s():
-               message = f"\nYes, you should write an accent on the last vowel: {self._write_accent(1)}"
-               # print(self._write_accent(-1))
-
+               advice = ('1', True, self._write_accent(1))
            else:
-               message = f"\nNo, don't write any accent, leave like that: {self.w.word}"
+               advice = ('1', False, self.w.word)
 
         elif self._estimated_type == 'llana':
             if self.w.ends_with_something_else():
-                message = f"\nYes, write an accent on the 2nd syllable from behind: {self._write_accent(2)}"
-                # print(self._write_accent(-2))
+                advice = ('2', True, self._write_accent(2))
             else:
-                message = f"\nNo, don't write any accent, leave like that: {self.w.word}"
+                advice = ('2', False, self.w.word)
 
-        return message
+        return advice
+
+    def print_advice(self):
+        type, add_accent, correct_word = self._determine_written_accent()
+
+        if add_accent:
+            print(f"Yes, you should write an accent in {type} syllable, like that: {correct_word}\n")
+        else:
+            print(f"No, don't write the accent in {type}, leave it like that: {correct_word}\n")
+
+
+
 
 # picks up a random value of a list of dictionary keys
 def pick_up_word_at_random():
@@ -228,7 +225,7 @@ def test_2():
     for key, value in wordies.items():
         # print(f"word {key} accent {value}")
         acentuation = AccentRules(key, value)
-        print(acentuation._determine_accent())
+        print(acentuation._determine_written_accent())
 
 
 def test_pyphen():
@@ -250,12 +247,14 @@ def guess_the_type():
 
     for t in range(times):
         word = pick_up_word_at_random()
-        user_answer = input(f"¿En qué sílaba se acentúa {word}?")
+        user_answer = input(f"¿En qué sílaba se acentúa {word}? >> ")
 
-        w = Word(w)
-        right_answer = DICTIONARY[word]
+        w = Word(word)
+        right_answer = w._determine_type()
 
-        if user_answer == right_answer:
+        user_answer2 = ACCENT_WORD[user_answer]
+
+        if user_answer2 == right_answer:
             print("Muy bien.")
             count_good_one += 1
         else:
@@ -271,7 +270,7 @@ def do_I_write_accent():
     input_accent = input("In which syllable do you hear the accent? 1,2,3 (counting from behind).\nSay 0 if you don't know >>> ")
 
     explanation = AccentRules(input_word, input_accent)
-    print(explanation._determine_accent())
+    print(explanation.print_advice())
 
 
 
@@ -282,4 +281,4 @@ if __name__ == "__main__":
     # test_1()
     # test_2()
     # test_pyphen()
-    # guess_the_type()
+    guess_the_type()
