@@ -1,8 +1,8 @@
 import random
 import pyphen
 import nltk
+import localisation as loc
 
-# todo write a bilingual version using string constants and user input for choice
 # todo replace pyphen with another library
 # todo: think of a way to handle two vowels together and diptongues
 # todo: replace WORDS_BAG with data out nltk corpus or wrapped out the internet
@@ -12,8 +12,18 @@ DIACRITICS = ["á", "é", "í", "ó", "ú"]
 N_OR_S = ["n", "s"]
 dic = pyphen.Pyphen(lang='es_ES')
 
-HELP_BY_ACCENT_TEXT = "accent help text"
-SYLLABICATION_ERROR = "Something went wrong with Pyphen"
+LOCALE = 'nl'
+ADVICE_YES = loc.ADVICE_YES[LOCALE]
+FEEDBACK_OK = loc.FEEDBACK_OK[LOCALE]
+FEEDBACK_WRONG =  loc.FEEDBACK_WRONG[LOCALE]
+GOOD_LUCK =  loc.GOOD_LUCK[LOCALE]
+HEARD_EMPHASIS =  loc.HEARD_EMPHASIS[LOCALE]
+HELP_BY_ACCENT_TEXT =  loc.HELP_BY_ACCENT_TEXT[LOCALE]
+HOW_MANY_TIMES = loc.HOW_MANY_TIMES[LOCALE]
+SYLLABICATION_ERROR = loc.SYLLABICATION_ERROR[LOCALE]
+WHICH_SYLLABLE = loc.WHICH_SYLLABLE[LOCALE]
+WHICH_WORD = loc.WHICH_WORD[LOCALE]
+
 
 
 DICTIONARY = {"jamón": 1, "bolígrafo": 3, "esdrújula": 3, "salón": 1, "melón": 1, "excursión": 1,
@@ -185,10 +195,9 @@ class AccentRules:
         sort, add_accent, correct_word = self._determine_written_accent()
 
         if add_accent:
-            print(f"Yes, you should write an accent in {sort} syllable, like that: {correct_word}\n")
+            print(ADVICE_YES,f"{sort}",LIKE_THAT, f"{correct_word}\n")
         else:
-            print(f"No, don't write the accent in {sort}, leave it like that: {correct_word}\n")
-
+            print(ADVICE_NO, f"{self.w.word}")
 
 
 def pick_up_word_at_random():
@@ -198,13 +207,13 @@ def pick_up_word_at_random():
 
 def guess_the_type():
 
-    times = int(input("¿Cuántas veces quieres jugar? (1-10)   >>>  "))
+    times = int(input(HOW_MANY_TIMES))
     count_good_one = 0
     count_bad_one = 0
 
     for t in range(times):
         word = pick_up_word_at_random()
-        user_answer = input(f"¿En qué sílaba se acentúa {word}? >> ")
+        user_answer = input(WHICH_SYLLABLE)
 
         w = Word(word)
         right_answer = w.determine_type()
@@ -212,26 +221,26 @@ def guess_the_type():
         user_answer_value = WORD_TYPE[user_answer]
 
         if user_answer_value == right_answer:
-            print("Muy bien.")
+            print(FEEDBACK_OK)
             count_good_one += 1
         else:
-            print(f"No, no, no, es {right_answer}")
+            print(FEEDBACK_WRONG, f"{right_answer}")
             if t < times - 1:
-                print("A ver si hay más suerte con la siguiente")
+                print(GOOD_LUCK)
                 count_bad_one += 1
 
 
 def do_i_write_accent():
 
-    input_word = input("Give me a word you don't know how to write >> ")
-    input_accent = input("In which syllable do you hear the accent? 1,2,3 (counting from behind).\nSay 0 if you don't know >>> ")
+    input_word = input(WHICH_WORD)
+    input_accent = input(HEARD_EMPHASIS)
 
     explanation = AccentRules(input_word, input_accent)
     print(explanation.print_advice())
 
 
 if __name__ == "__main__":
-
+    # todo change to parameters
     choice = input("What would you like to do? Guess emphasis(1) or know how to write(2) >> ")
     if choice == "1":
         guess_the_type()
