@@ -30,21 +30,21 @@ class AcentuarTestCases(unittest.TestCase):
         wordies = {"santo": "2", "condor": "2", "carmen": "2",
                    "colibri": "1", "cantor": "1", "camion": "1",
                    "boligrafo": "3"}
-        # wordies = {"experiencia": "2"} # it fails while pyphen is correct
 
         for key, value in wordies.items():
             print(f"word {key} accent {value}")
             acentuation = acentuar.AccentRules(key, value)
-            advice, _, _  = acentuation._determine_written_accent()
+            advice, _, _ = acentuation._determine_written_accent()
             self.assertEqual(advice, wordies[key])
 
     def test_pyphen(self):
         # not really an unittest but handy to have in place
-        # for word in acentuar.WORDS_BAG:
-        #     print(acentuar.dic.inserted(word))
+        for word in acentuar.WORDS_BAG:
+            print(acentuar.dic.inserted(word))
 
-        print(acentuar.dic.inserted("experiencia"))
-
+    def test_is_esdrujula(self):
+        w = acentuar.Word("experiencia")
+        self.assertEqual(w._is_esdrujula(), False)
 
 
 if __name__ == '__main__':
