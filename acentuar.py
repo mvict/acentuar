@@ -5,7 +5,7 @@ import localisation as loc
 
 # todo replace pyphen with another library
 # todo: think of a way to handle two vowels together and diptongues
-# todo: replace WORDS_BAG with data out nltk corpus or wrapped out the internet
+# todo: replace WORDS_BAG with data out nltk corpus or scrapped out the internet
 
 VOWELS = ["a", "e", "i", "o", "u"]
 DIACRITICS = ["á", "é", "í", "ó", "ú"]
