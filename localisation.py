@@ -1,11 +1,11 @@
-ADVICE_YES = {"en": f"Yes, you should write an accent in syllable number ",
-              "es": f"Sí, escriba un acento en la sílaba ",
-              "nl": f"Ja, schrijf maar een accent op lettergreep "
+ADVICE_YES = {"en": "Yes, you should write an accent in syllable number {}. ",
+              "es": "Sí, escriba un acento en la sílaba {}. ",
+              "nl": "Ja, schrijf maar een accent op lettergreep {}. "
               }
 
-ADVICE_NO = {"en": f"No accent needed, leave it like that:",
-             "es": f"No hace falta ningún acento. Déjala así:",
-             "nl": f"U hoeft geen accent te schrijven. Laat maar zo:"
+ADVICE_NO = {"en": "No accent needed, leave it like that:{}. ",
+             "es": "No hace falta ningún acento. Déjela así: {}. ",
+             "nl": "U hoeft geen accent te schrijven. Laat maar zo: {}. "
             }
 
 FEEDBACK_OK = {"en": "Great",
@@ -28,7 +28,7 @@ HEARD_EMPHASIS = {"en": "In which syllable do you hear the accent? (1, 2, 3 coun
                   "es": "¿En qué sílaba oye el acento? (1, 2, 3 empezando por el final)"
                         "\nDiga 0 si no lo sabe >>> ",
                   "nl": "Op welk lettergrep hoort u de klemton? (1, 2, 3 van achteren). "
-                        "\nZeg 0 als u het niet weet"
+                        "\nZeg 0 als u het niet weet >>> "
                   }
 
 HELP_BY_ACCENT_TEXT = {"es": "Ayuda ",
@@ -41,9 +41,9 @@ HOW_MANY_TIMES = {"en": "How many times would you like to play? (1-10)   >>>  ",
                   "nl": "Hoeveel keer wilt u spelen? (1-10)   >>> "
                   }
 
-LIKE_THAT = {"en": "Like that: ",
-             "es": "Así: ",
-             "nl": "Zo: "
+LIKE_THAT = {"en": "Like that: {}",
+             "es": "Así: {}",
+             "nl": "Zo: {}"
 
             }
 

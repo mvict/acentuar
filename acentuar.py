@@ -9,7 +9,7 @@ import argparse
 # todo: replace WORDS_BAG with data out nltk corpus or scrapped out the internet
 # todo: include exceptions
 # todo: convert into package to send to Clara
-# todo: include explanation about the accentuation system
+# todo: include explanation about the accentuation system _explanation_about_accents
 
 VOWELS = ["a", "e", "i", "o", "u"]
 DIACRITICS = ["á", "é", "í", "ó", "ú"]
@@ -37,6 +37,7 @@ class Localization:
         self.HEARD_EMPHASIS = loc.HEARD_EMPHASIS[locale]
         self.HELP_BY_ACCENT_TEXT = loc.HELP_BY_ACCENT_TEXT[locale]
         self.HOW_MANY_TIMES = loc.HOW_MANY_TIMES[locale]
+        self.LIKE_THAT = loc.LIKE_THAT[locale]
         self.SYLLABICATION_ERROR = loc.SYLLABICATION_ERROR[locale]
         self.WHICH_SYLLABLE = loc.WHICH_SYLLABLE[locale]
         self.WHICH_WORD = loc.WHICH_WORD[locale]
@@ -198,9 +199,9 @@ class AccentRules:
         sort, add_accent, correct_word = self._determine_written_accent()
 
         if add_accent:
-            print(prompt.ADVICE_YES,f"{sort}",LIKE_THAT, f"{correct_word}\n")
+            return prompt.ADVICE_YES.format(sort) + prompt.LIKE_THAT.format(correct_word)
         else:
-            print(prompt.ADVICE_NO, f"{self.w.word}")
+            return prompt.ADVICE_NO.format(self.w.word)
 
 
 def pick_up_word_at_random():
@@ -216,7 +217,6 @@ def guess_the_type():
 
     for t in range(times):
         word = pick_up_word_at_random()
-        print(new_string)
         user_answer = input(prompt.WHICH_SYLLABLE.format(word))
 
         w = Word(word)
@@ -234,32 +234,50 @@ def guess_the_type():
                 count_bad_one += 1
 
 
-def do_i_write_accent():
+def do_i_write_accent(word):
 
-    input_word = input(prompt.WHICH_WORD)
+    if word == "":
+        word_to_treat = input(prompt.WHICH_WORD)
+    else:
+        word_to_treat = word
+
     input_accent = input(prompt.HEARD_EMPHASIS)
 
-    explanation = AccentRules(input_word, input_accent)
+    explanation = AccentRules(word_to_treat, input_accent)
+
     print(explanation.print_advice())
 
 
 if __name__ == "__main__":
-    # LOCALE is by default Spanish but can be changed in cmd line
-    LOCALE = 'es'
+    # usage
+    # --guess
+    # it will then call guess_the_type()
+
+    # --w catalizador
+    # it will call do_i_write_accent("catalizador")
+
+    # without parameters it will ask which word you want to consult
+    # it will call do_i_write_accent("")
 
     parser = argparse.ArgumentParser(description='This program helps you learn your accents in Spanish')
-    parser.add_argument('-ch', dest='users_choice', type=int, choices=[1,2],
-                        help="Choice to run: 'Guess emphasis'(1) or 'How to write word'(2)")
-    parser.add_argument('-l', dest='locale', choices=['en', 'es', 'nl'],
-                        help='Chose the language you want for the program (en, es, nl)')
+    parser.add_argument('--l', dest='locale', choices=['en', 'es', 'nl'], default="es",
+                        help='The locale language you want the program to address you (en, es, nl)')
+    parser.add_argument('--w', dest='word', default="",
+                        help='The word you want to consult')
+    parser.add_argument('--guess', dest='users_choice', action='store_const',
+                        const=guess_the_type, default=do_i_write_accent,
+                        help="guess will run a program to train you in determining the accent\n"
+                             "otherwise you will be able to consult a word")
 
     arguments = parser.parse_args()
-    action = arguments.users_choice
-    LOCALE = arguments.locale
 
+    # LOCALE is by default Spanish but can be changed in cmd line
+    LOCALE = arguments.locale
     prompt = Localization(LOCALE)
 
-    if action == 1:
-        guess_the_type()
+    function_to_call = arguments.users_choice
+    word_to_process = arguments.word
+    if function_to_call == guess_the_type:
+        function_to_call()
     else:
-        do_i_write_accent()
+        function_to_call(word_to_process)
