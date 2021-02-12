@@ -2,18 +2,22 @@ import random
 import pyphen
 import nltk
 import localisation as loc
+import argparse
 
 # todo replace pyphen with another library
 # todo: think of a way to handle two vowels together and diptongues
 # todo: replace WORDS_BAG with data out nltk corpus or scrapped out the internet
+# todo: include exceptions
 
 VOWELS = ["a", "e", "i", "o", "u"]
 DIACRITICS = ["á", "é", "í", "ó", "ú"]
 N_OR_S = ["n", "s"]
 dic = pyphen.Pyphen(lang='es_ES')
 
-LOCALE = 'nl'
+# LOCALE is by default Spanish but can be changed in cmd line
+LOCALE = 'es'
 ADVICE_YES = loc.ADVICE_YES[LOCALE]
+ADVICE_NO = loc.ADVICE_NO[LOCALE]
 FEEDBACK_OK = loc.FEEDBACK_OK[LOCALE]
 FEEDBACK_WRONG =  loc.FEEDBACK_WRONG[LOCALE]
 GOOD_LUCK =  loc.GOOD_LUCK[LOCALE]
@@ -213,7 +217,8 @@ def guess_the_type():
 
     for t in range(times):
         word = pick_up_word_at_random()
-        user_answer = input(WHICH_SYLLABLE)
+        print(new_string)
+        user_answer = input(WHICH_SYLLABLE.format(word))
 
         w = Word(word)
         right_answer = w.determine_type()
@@ -224,7 +229,7 @@ def guess_the_type():
             print(FEEDBACK_OK)
             count_good_one += 1
         else:
-            print(FEEDBACK_WRONG, f"{right_answer}")
+            print(FEEDBACK_WRONG.format(right_answer))
             if t < times - 1:
                 print(GOOD_LUCK)
                 count_bad_one += 1
@@ -240,11 +245,18 @@ def do_i_write_accent():
 
 
 if __name__ == "__main__":
-    # todo change to parameters
-    choice = input("What would you like to do? Guess emphasis(1) or know how to write(2) >> ")
-    if choice == "1":
+
+    parser = argparse.ArgumentParser(description='This program helps you learn your accents in Spanish')
+    parser.add_argument('-ch', dest='users_choice', type=int, choices=[1,2],
+                        help="Choice to run: 'Guess emphasis'(1) or 'How to write word'(2)")
+    parser.add_argument('-l', dest='locale', choices=['en', 'es', 'nl'],
+                        help='Chose the language you want for the program (en, es, nl)')
+
+    arguments = parser.parse_args()
+    action = arguments.users_choice
+    LOCALE = arguments.locale
+
+    if action == 1:
         guess_the_type()
-    elif choice == "2":
-        do_i_write_accent()
     else:
-        print("Your choices where 1 or 2")
+        do_i_write_accent()

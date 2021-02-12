@@ -13,9 +13,9 @@ FEEDBACK_OK = {"en": "Great",
                "nl": "Prima"
                }
 
-FEEDBACK_WRONG = {"en": f"No, no, no, it is: ",
-                  "es": f"No, no, no, es: ",
-                  "nl": f"No, no, no, het is:"
+FEEDBACK_WRONG = {"en": "No, no, no, it is: {}",
+                  "es": "No, no, no, es: {}",
+                  "nl": "No, no, no, het is: {}"
                   }
 
 GOOD_LUCK = {"en": "Good luck with next word!",
@@ -23,9 +23,9 @@ GOOD_LUCK = {"en": "Good luck with next word!",
              "nl": "Succes met het volgende word!"
              }
 
-HEARD_EMPHASIS = {"en": "In which syllable do you hear the accent? 1,2,3 (counting from behind)."
+HEARD_EMPHASIS = {"en": "In which syllable do you hear the accent? (1, 2, 3 counting from behind)."
                         "\nSay 0 if you don't know >>> ",
-                  "es": "¿En qué sílaba oye el acento?(1,2,3 empezando por el final)"
+                  "es": "¿En qué sílaba oye el acento? (1, 2, 3 empezando por el final)"
                         "\nDiga 0 si no lo sabe >>> ",
                   "nl": "Op welk lettergrep hoort u de klemton? (1, 2, 3 van achteren). "
                         "\nZeg 0 als u het niet weet"
@@ -52,9 +52,9 @@ SYLLABICATION_ERROR = {"en": "Syllabication error occurred while splitsing the w
                        "nl": "Er is iets mis met de splitsing in lettergreppen gegaan"
                        }
 
-WHICH_SYLLABLE = {"en": f"¿En qué sílaba se acentúa? ",
-                  "es": f"In which syllable does the emphasis fall? ",
-                  "nl": f"Op welk lettergreep valt de klemtoon? "
+WHICH_SYLLABLE = {"en": "¿En qué sílaba se acentúa {}? ",
+                  "es": "In which syllable does the emphasis fall in {}? ",
+                  "nl": "Op welk lettergreep valt de klemtoon in {}? "
                   }
 
 WHICH_WORD = {"en": "Give me a word you don't know how to write >> ",
