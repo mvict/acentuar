@@ -8,27 +8,13 @@ import argparse
 # todo: think of a way to handle two vowels together and diptongues
 # todo: replace WORDS_BAG with data out nltk corpus or scrapped out the internet
 # todo: include exceptions
+# todo: convert into package to send to Clara
+# todo: include explanation about the accentuation system
 
 VOWELS = ["a", "e", "i", "o", "u"]
 DIACRITICS = ["á", "é", "í", "ó", "ú"]
 N_OR_S = ["n", "s"]
 dic = pyphen.Pyphen(lang='es_ES')
-
-# LOCALE is by default Spanish but can be changed in cmd line
-LOCALE = 'es'
-ADVICE_YES = loc.ADVICE_YES[LOCALE]
-ADVICE_NO = loc.ADVICE_NO[LOCALE]
-FEEDBACK_OK = loc.FEEDBACK_OK[LOCALE]
-FEEDBACK_WRONG =  loc.FEEDBACK_WRONG[LOCALE]
-GOOD_LUCK =  loc.GOOD_LUCK[LOCALE]
-HEARD_EMPHASIS =  loc.HEARD_EMPHASIS[LOCALE]
-HELP_BY_ACCENT_TEXT =  loc.HELP_BY_ACCENT_TEXT[LOCALE]
-HOW_MANY_TIMES = loc.HOW_MANY_TIMES[LOCALE]
-SYLLABICATION_ERROR = loc.SYLLABICATION_ERROR[LOCALE]
-WHICH_SYLLABLE = loc.WHICH_SYLLABLE[LOCALE]
-WHICH_WORD = loc.WHICH_WORD[LOCALE]
-
-
 
 DICTIONARY = {"jamón": 1, "bolígrafo": 3, "esdrújula": 3, "salón": 1, "melón": 1, "excursión": 1,
               "césped": 2, "perro": 2, "gato": 2, "perdiz": 1, "equipo": 2
@@ -41,6 +27,19 @@ WORDS_BAG = ["abarrotado", "colombia", "mueve", "abarrotes", "comadreja", "nubes
 
 WORD_TYPE = {"1": "aguda", "2": "llana", "3": "esdrújula"}
 
+class Localization:
+    def __init__(self, locale):
+        self.ADVICE_YES = loc.ADVICE_YES[locale]
+        self.ADVICE_NO = loc.ADVICE_NO[locale]
+        self.FEEDBACK_OK = loc.FEEDBACK_OK[locale]
+        self.FEEDBACK_WRONG = loc.FEEDBACK_WRONG[locale]
+        self.GOOD_LUCK = loc.GOOD_LUCK[locale]
+        self.HEARD_EMPHASIS = loc.HEARD_EMPHASIS[locale]
+        self.HELP_BY_ACCENT_TEXT = loc.HELP_BY_ACCENT_TEXT[locale]
+        self.HOW_MANY_TIMES = loc.HOW_MANY_TIMES[locale]
+        self.SYLLABICATION_ERROR = loc.SYLLABICATION_ERROR[locale]
+        self.WHICH_SYLLABLE = loc.WHICH_SYLLABLE[locale]
+        self.WHICH_WORD = loc.WHICH_WORD[locale]
 
 class Word:
     def __init__(self, word):
@@ -170,7 +169,7 @@ class AccentRules:
 
             return "".join(syllables)
         except IndexError:
-            print(SYLLABIZATION_ERROR)
+            print(prompt.SYLLABIZATION_ERROR)
 
     def _determine_written_accent(self):
         """determines whether an accent should be written based on where the user hears the word emphasis"""
@@ -199,9 +198,9 @@ class AccentRules:
         sort, add_accent, correct_word = self._determine_written_accent()
 
         if add_accent:
-            print(ADVICE_YES,f"{sort}",LIKE_THAT, f"{correct_word}\n")
+            print(prompt.ADVICE_YES,f"{sort}",LIKE_THAT, f"{correct_word}\n")
         else:
-            print(ADVICE_NO, f"{self.w.word}")
+            print(prompt.ADVICE_NO, f"{self.w.word}")
 
 
 def pick_up_word_at_random():
@@ -211,14 +210,14 @@ def pick_up_word_at_random():
 
 def guess_the_type():
 
-    times = int(input(HOW_MANY_TIMES))
+    times = int(input(prompt.HOW_MANY_TIMES))
     count_good_one = 0
     count_bad_one = 0
 
     for t in range(times):
         word = pick_up_word_at_random()
         print(new_string)
-        user_answer = input(WHICH_SYLLABLE.format(word))
+        user_answer = input(prompt.WHICH_SYLLABLE.format(word))
 
         w = Word(word)
         right_answer = w.determine_type()
@@ -226,25 +225,27 @@ def guess_the_type():
         user_answer_value = WORD_TYPE[user_answer]
 
         if user_answer_value == right_answer:
-            print(FEEDBACK_OK)
+            print(prompt.FEEDBACK_OK)
             count_good_one += 1
         else:
-            print(FEEDBACK_WRONG.format(right_answer))
+            print(prompt.FEEDBACK_WRONG.format(right_answer))
             if t < times - 1:
-                print(GOOD_LUCK)
+                print(prompt.GOOD_LUCK)
                 count_bad_one += 1
 
 
 def do_i_write_accent():
 
-    input_word = input(WHICH_WORD)
-    input_accent = input(HEARD_EMPHASIS)
+    input_word = input(prompt.WHICH_WORD)
+    input_accent = input(prompt.HEARD_EMPHASIS)
 
     explanation = AccentRules(input_word, input_accent)
     print(explanation.print_advice())
 
 
 if __name__ == "__main__":
+    # LOCALE is by default Spanish but can be changed in cmd line
+    LOCALE = 'es'
 
     parser = argparse.ArgumentParser(description='This program helps you learn your accents in Spanish')
     parser.add_argument('-ch', dest='users_choice', type=int, choices=[1,2],
@@ -255,6 +256,8 @@ if __name__ == "__main__":
     arguments = parser.parse_args()
     action = arguments.users_choice
     LOCALE = arguments.locale
+
+    prompt = Localization(LOCALE)
 
     if action == 1:
         guess_the_type()
