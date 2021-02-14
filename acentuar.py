@@ -27,10 +27,15 @@ WORDS_BAG = ["abarrotado", "colombia", "mueve", "abarrotes", "comadreja", "nubes
 
 WORD_TYPE = {"1": "aguda", "2": "llana", "3": "esdrújula"}
 
+
 class Localization:
     def __init__(self, locale):
-        self.ADVICE_YES = loc.ADVICE_YES[locale]
         self.ADVICE_NO = loc.ADVICE_NO[locale]
+        self.ADVICE_YES = loc.ADVICE_YES[locale]
+        self.AGUDAS_SOMETHING_ELSE = loc.AGUDAS_SOMETHING_ELSE[locale]
+        self.AGUDAS_VOWEL_N_S = loc.AGUDAS_VOWEL_N_S[locale]
+        self.ALL_ESDRUJULAS = loc.ALL_ESDRUJULAS[locale]
+        self.EMPHASIS_EXPLANATION = loc.EMPHASIS_EXPLANATION[locale]
         self.FEEDBACK_OK = loc.FEEDBACK_OK[locale]
         self.FEEDBACK_WRONG = loc.FEEDBACK_WRONG[locale]
         self.GOOD_LUCK = loc.GOOD_LUCK[locale]
@@ -38,9 +43,11 @@ class Localization:
         self.HELP_BY_ACCENT_TEXT = loc.HELP_BY_ACCENT_TEXT[locale]
         self.HOW_MANY_TIMES = loc.HOW_MANY_TIMES[locale]
         self.LIKE_THAT = loc.LIKE_THAT[locale]
+        self.LLANAS_VOWEL_N_S = loc.LLANAS_VOWEL_N_S[locale]
         self.SYLLABICATION_ERROR = loc.SYLLABICATION_ERROR[locale]
         self.WHICH_SYLLABLE = loc.WHICH_SYLLABLE[locale]
         self.WHICH_WORD = loc.WHICH_WORD[locale]
+
 
 class Word:
     def __init__(self, word):
@@ -69,6 +76,14 @@ class Word:
             if char in DIACRITICS:
                 return True
         return False
+
+    def diacritic_in_word(self):
+        for char in self.word:
+            if char in DIACRITICS:
+                return True
+        return False
+
+
 
     def _is_aguda(self):
         if self._ends_with_diacritic():
@@ -145,7 +160,7 @@ class Word:
 
 class AccentRules:
     def __init__(self, given_word, heard_accent):
-        self.w = Word(given_word)
+        self.w = given_word
         self._estimated_type = "No sé"
 
         if heard_accent == "0":
@@ -155,7 +170,7 @@ class AccentRules:
             self._estimated_type = WORD_TYPE[heard_accent]
 
     def _explanation_about_accents(self):
-        return "big explanation about how the Spanish accent system works"
+        return prompt.EMPHASIS_EXPLANATION
 
     def _write_accent(self, index):
         length, syllables = self.w.split_in_syllables()
@@ -176,32 +191,32 @@ class AccentRules:
         """determines whether an accent should be written based on where the user hears the word emphasis"""
 
         # syllable, write or not, new word
-        advice = ("", False, "0")
+        advice = ("", False, "0", "")
 
         if self._estimated_type == 'esdrújula':
-            advice = ('3', True, self._write_accent(3))
+            advice = ('3', True, self._write_accent(3), prompt.ALL_ESDRUJULAS)
 
         elif self._estimated_type == 'aguda':
             if self.w.ends_with_vowel() or self.w.ends_with_n_s():
-                advice = ('1', True, self._write_accent(1))
+                advice = ('1', True, self._write_accent(1), prompt.AGUDAS_VOWEL_N_S)
             else:
-                advice = ('1', False, self.w.word)
+                advice = ('1', False, self.w.word, prompt.AGUDAS_ONLY_VOWEL_N_S)
 
         elif self._estimated_type == 'llana':
             if self.w.ends_with_something_else():
-                advice = ('2', True, self._write_accent(2))
+                advice = ('2', True, self._write_accent(2), prompt.LLANAS_SOMETHING_ELSE)
             else:
-                advice = ('2', False, self.w.word)
+                advice = ('2', False, self.w.word, prompt.LLANAS_VOWEL_N_S)
 
         return advice
 
-    def print_advice(self):
-        sort, add_accent, correct_word = self._determine_written_accent()
+    def build_advice_prompt(self):
+        sort, add_accent, correct_word, explanation = self._determine_written_accent()
 
         if add_accent:
-            return prompt.ADVICE_YES.format(sort) + prompt.LIKE_THAT.format(correct_word)
+            return prompt.ADVICE_YES.format(sort) + prompt.LIKE_THAT.format(correct_word), explanation
         else:
-            return prompt.ADVICE_NO.format(self.w.word)
+            return prompt.ADVICE_NO.format(self.w.word), explanation
 
 
 def pick_up_word_at_random():
@@ -221,7 +236,7 @@ def guess_the_type():
 
         w = Word(word)
         right_answer = w.determine_type()
-
+        # user answer is 1, 2, 3 or 0
         user_answer_value = WORD_TYPE[user_answer]
 
         if user_answer_value == right_answer:
@@ -235,23 +250,35 @@ def guess_the_type():
 
 
 def do_i_write_accent(word):
-
+    # if no word was given in command line
     if word == "":
         word_to_treat = input(prompt.WHICH_WORD)
     else:
         word_to_treat = word
 
-    input_accent = input(prompt.HEARD_EMPHASIS)
+    try:
+        w = Word(word_to_treat)
 
-    explanation = AccentRules(word_to_treat, input_accent)
+        # to check that the user didn't used á, é, í, ó or ú
+        assert not w.diacritic_in_word()
 
-    print(explanation.print_advice())
+        input_accent = input(prompt.HEARD_EMPHASIS)
+        explanation = AccentRules(w, input_accent)
 
+        word_advice, why = explanation.build_advice_prompt()
+        print(word_advice, why)
+
+
+    except AssertionError:
+        print("You already wrote an accent, please give me a word without diacritics")
+
+    # except:
+    #     print("Something else happened")
 
 if __name__ == "__main__":
     # usage
     # --guess
-    # it will then call guess_the_type()
+    # it will call guess_the_type()
 
     # --w catalizador
     # it will call do_i_write_accent("catalizador")
@@ -259,14 +286,14 @@ if __name__ == "__main__":
     # without parameters it will ask which word you want to consult
     # it will call do_i_write_accent("")
 
-    parser = argparse.ArgumentParser(description='This program helps you learn your accents in Spanish')
+    parser = argparse.ArgumentParser(description='This program helps you how to use accents in Spanish')
     parser.add_argument('--l', dest='locale', choices=['en', 'es', 'nl'], default="es",
-                        help='The locale language you want the program to address you (en, es, nl)')
+                        help='The locale language the program will use (en, es, nl)')
     parser.add_argument('--w', dest='word', default="",
                         help='The word you want to consult')
     parser.add_argument('--guess', dest='users_choice', action='store_const',
                         const=guess_the_type, default=do_i_write_accent,
-                        help="guess will run a program to train you in determining the accent\n"
+                        help="--guess will run a program to train you in determining the accent\n"
                              "otherwise you will be able to consult a word")
 
     arguments = parser.parse_args()
@@ -277,7 +304,10 @@ if __name__ == "__main__":
 
     function_to_call = arguments.users_choice
     word_to_process = arguments.word
+
+    # guess_the_type doesn't take parameters
     if function_to_call == guess_the_type:
         function_to_call()
+    # word_to_process() takes an empty string by default or a word
     else:
         function_to_call(word_to_process)
