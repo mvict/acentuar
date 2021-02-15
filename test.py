@@ -5,13 +5,13 @@ import acentuar
 class AcentuarTestCases(unittest.TestCase):
 
     def test_type_aguda(self):
-        types_dictionary = { "cantó":"aguda", "camión":"aguda", "cantor":"aguda"}
+        types_dictionary = {"cantó": "aguda", "camión": "aguda", "cantor": "aguda"}
         for word in types_dictionary:
             w = acentuar.Word(word)
             self.assertEqual(w.type, types_dictionary[word])
 
     def test_type_llana(self):
-        types_dictionary = {"canto": "llana", "cóndor": "llana","carmen": "llana"}
+        types_dictionary = {"canto": "llana", "cóndor": "llana", "carmen": "llana"}
 
         for word in types_dictionary:
             w = acentuar.Word(word)
@@ -30,15 +30,15 @@ class AcentuarTestCases(unittest.TestCase):
         wordies = {"santo": "2", "condor": "2", "carmen": "2",
                    "colibri": "1", "cantor": "1", "camion": "1",
                    "boligrafo": "3"}
-
         for key, value in wordies.items():
             print(f"word {key} accent {value}")
-            acentuation = acentuar.AccentRules(key, value)
-            advice, _, _ = acentuation._determine_written_accent()
-            self.assertEqual(advice, wordies[key])
+            k = acentuar.Word(key)
+            acentuation = acentuar.AccentRules(k, value, "es")
+            advice, _, _, _ = acentuation._determine_written_accent()
+            self.assertEqual(advice, value)
 
     def test_pyphen(self):
-        # not really an unittest but handy to have in place
+        # not really a unittest but handy to have in place
         for word in acentuar.WORDS_BAG:
             print(acentuar.dic.inserted(word))
 
