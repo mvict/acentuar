@@ -104,8 +104,8 @@ SYLLABICATION_ERROR = {
   }
 
 WHICH_SYLLABLE = {
-    "en": "¿En qué sílaba se acentúa {}? ",
-    "es": "In which syllable does the emphasis fall in {}? ",
+    "es": "¿En qué sílaba se acentúa {}? ",
+    "en": "In which syllable does the emphasis fall in {}? ",
     "nl": "Op welk lettergreep valt de klemtoon in {}? "
     }
 
