@@ -4,7 +4,6 @@ import pyphen
 import localisation as loc
 
 
-
 VOWELS = ["a", "e", "i", "o", "u"]
 DIACRITICS = ["á", "é", "í", "ó", "ú"]
 N_OR_S = ["n", "s"]
@@ -25,7 +24,10 @@ WORD_TYPE = {"1": "aguda", "2": "llana", "3": "esdrújula"}
 
 
 class Localization:
-    """Localisation defines prompts used outside classes. Mostly user interaction."""
+    """
+        Localisation defines prompts used outside classes.
+        Mostly used for user interaction prompts.
+    """
     def __init__(self, locale):
         self.DIACRITIC_ALREADY_USE = loc.DIACRITIC_ALREADY_USE[locale]
         self.FEEDBACK_OK = loc.FEEDBACK_OK[locale]
@@ -222,11 +224,28 @@ class AccentRules:
 
 
 def pick_up_word_at_random():
-    """picks up a random value of a list of dictionary keys"""
+    """
+    picks up a random value of a list of dictionary keys
+    """
     return random.choice(list(WORDS_BAG))
 
 
+def check_input_value(user_input):
+    """
+        :raises a KeyError if the value given is not correct
+    """
+    try:
+        if user_input not in ["0", "1", "2", "3"]:
+            raise KeyError
+    except KeyError:
+        print(prompt.WRONG_INPUT_NUMBER)
+
+
 def guess_the_type():
+    """
+        creates an exercise to practice the classification
+         of words in aguda, llana or esdrújula
+    """
 
     times = int(input(prompt.HOW_MANY_TIMES))
     count_good_one = 0
@@ -236,29 +255,31 @@ def guess_the_type():
         word = pick_up_word_at_random()
         user_answer = input(prompt.WHICH_SYLLABLE.format(word))
 
-        try:
-            assert user_answer in ["0", "1", "2", "3"]
+        # check_input_value will raise exception if wrong value
+        check_input_value(user_answer)
 
-            w = Word(word)
-            right_answer = w.determine_type()
+        w = Word(word)
+        right_answer = w.determine_type()
 
-            # user answer is "1", "2", "3 or "0"
-            user_answer_value = WORD_TYPE[user_answer]
+        # user answer is "1", "2", "3 or "0"
+        user_answer_value = WORD_TYPE[user_answer]
 
-            if user_answer_value == right_answer:
-                print(prompt.FEEDBACK_OK)
-                count_good_one += 1
-            else:
-                print(prompt.FEEDBACK_WRONG.format(right_answer))
-                if t < times - 1:
-                    print(prompt.GOOD_LUCK)
-                    count_bad_one += 1
-
-        except AssertionError:
-            print(prompt.WRONG_INPUT_NUMBER)
+        if user_answer_value == right_answer:
+            print(prompt.FEEDBACK_OK)
+            count_good_one += 1
+        else:
+            print(prompt.FEEDBACK_WRONG.format(right_answer))
+            if t < times - 1:
+                print(prompt.GOOD_LUCK)
+                count_bad_one += 1
 
 
 def do_i_write_accent(word, locale):
+    """
+        gives advice to the user on how to write a word
+        prints the correct word
+        explains the rule used
+    """
     # if no word was given in command line
     if word == "":
         word_to_treat = input(prompt.WHICH_WORD)
@@ -268,15 +289,19 @@ def do_i_write_accent(word, locale):
     try:
         w = Word(word_to_treat)
 
-        # to check that the user didn't used á, é, í, ó or ú
+        # check that the user didn't used á, é, í, ó or ú
         assert not w.diacritic_in_word()
 
+        # ask user where the emphasis is heard
         input_accent = input(prompt.HEARD_EMPHASIS)
-        explanation = AccentRules(w, input_accent, locale)
 
+        # check_input_value will raise exception if wrong value
+        check_input_value(input_accent)
+
+        # give advice, show correct word and explain
+        explanation = AccentRules(w, input_accent, locale)
         word_advice, why = explanation.build_advice_prompt()
         print(word_advice, why)
-
 
     except AssertionError:
         print(prompt.DIACRITIC_ALREADY_USED)
