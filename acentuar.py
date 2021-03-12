@@ -1,13 +1,15 @@
+import argparse
 import random
 import pyphen
-import nltk
 import localisation as loc
-import argparse
+
 
 
 VOWELS = ["a", "e", "i", "o", "u"]
 DIACRITICS = ["á", "é", "í", "ó", "ú"]
 N_OR_S = ["n", "s"]
+
+# dic to split in syllables
 dic = pyphen.Pyphen(lang='es_ES')
 
 DICTIONARY = {"jamón": 1, "bolígrafo": 3, "esdrújula": 3, "salón": 1, "melón": 1, "excursión": 1,
@@ -25,6 +27,7 @@ WORD_TYPE = {"1": "aguda", "2": "llana", "3": "esdrújula"}
 class Localization:
     """Localisation defines prompts used outside classes. Mostly user interaction."""
     def __init__(self, locale):
+        self.DIACRITIC_ALREADY_USE = loc.DIACRITIC_ALREADY_USE[locale]
         self.FEEDBACK_OK = loc.FEEDBACK_OK[locale]
         self.FEEDBACK_WRONG = loc.FEEDBACK_WRONG[locale]
         self.GOOD_LUCK = loc.GOOD_LUCK[locale]
@@ -33,12 +36,12 @@ class Localization:
         self.WHICH_SYLLABLE = loc.WHICH_SYLLABLE[locale]
         self.WHICH_WORD = loc.WHICH_WORD[locale]
 
-
 class Word:
     def __init__(self, word):
         self.word = word
         self._length, self._syllables = self.split_in_syllables()
         self.type = self.determine_type()
+        self.SYLLABICATION_ERROR = loc.SYLLABICATION_ERROR[locale]
 
     def ends_with_vowel(self):
         return self.word[-1] in VOWELS
@@ -137,7 +140,7 @@ class Word:
             assert length >= 2
             return length, syllables_list
         except:
-            print(f"Hyphenation went wrong {length}")
+            print(self.SYLLABICATION_ERROR)
 
 
 class AccentRules:
@@ -172,7 +175,8 @@ class AccentRules:
                 for count, vowel in enumerate(VOWELS):
                     if character == vowel:
                         syllables[-index].replace(character, DIACRITICS[count])
-                        new_syllable = syllables[-index].replace(character, DIACRITICS[count])
+                        new_syllable = syllables[-index].\
+                                       replace(character, DIACRITICS[count])
                         syllables[-index] = new_syllable
 
             return "".join(syllables)
@@ -180,7 +184,12 @@ class AccentRules:
             print(self.SYLLABICATION_ERROR)
 
     def _determine_written_accent(self):
-        """determines whether an accent should be written based on where the user hears the word emphasis"""
+        """
+        determines whether an accent should be written based
+        on where the user hears the word emphasis
+        :returns a tuple representing the advise
+        (word type, True if diatritic needed, word correct spelled, message)
+        """
 
         # syllable, write or not, new word
         advice = ("", False, "0", "")
@@ -262,30 +271,28 @@ def do_i_write_accent(word, locale):
 
 
     except AssertionError:
-        print("You already wrote an accent, please give me a word without diacritics")
-
-    # except:
-    #     print("Something else happened")
+        print(prompt.DIACRITIC_ALREADY_USED)
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='This program helps you how to use accents in Spanish')
-    parser.add_argument('--l', dest='locale', choices=['en', 'es', 'nl'], default="es",
+    parser.add_argument('-l', dest='locale', choices=['en', 'es', 'nl'], default="es",
                         help='The locale language the program will use (en, es, nl)')
-    parser.add_argument('--w', dest='word', default="",
+    parser.add_argument('-w', dest='word', default="",
                         help='The word you want to consult')
-    parser.add_argument('--guess', dest='users_choice', action='store_const',
+    parser.add_argument('-guess', dest='users_choice', action='store_const',
                         const=guess_the_type, default=do_i_write_accent,
-                        help="--guess will run a program to train you in determining the accent\n"
+                        help="-guess will run a program to train you in determining the accent\n"
                              "otherwise you will be able to consult a word")
 
     arguments = parser.parse_args()
 
-    # LOCALE is by default Spanish but can be changed in cmd line
-    # prompt contains all
-    LOCALE = arguments.locale
-    prompt = Localization(LOCALE)
+    # locale` is by default Spanish but can be changed in cmd line
+    locale = arguments.locale
+
+    # prompt read the prompts in localisation.py according to locale
+    prompt = Localization(locale)
 
     function_to_call = arguments.users_choice
     word_to_process = arguments.word
