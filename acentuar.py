@@ -35,6 +35,7 @@ class Localization:
         self.HOW_MANY_TIMES = loc.HOW_MANY_TIMES[locale]
         self.WHICH_SYLLABLE = loc.WHICH_SYLLABLE[locale]
         self.WHICH_WORD = loc.WHICH_WORD[locale]
+        self.WRONG_INPUT_NUMBER = loc.WRONG_INPUT_NUMBER[locale]
 
 class Word:
     def __init__(self, word):
@@ -235,19 +236,26 @@ def guess_the_type():
         word = pick_up_word_at_random()
         user_answer = input(prompt.WHICH_SYLLABLE.format(word))
 
-        w = Word(word)
-        right_answer = w.determine_type()
-        # user answer is 1, 2, 3 or 0
-        user_answer_value = WORD_TYPE[user_answer]
+        try:
+            assert user_answer in ["0", "1", "2", "3"]
 
-        if user_answer_value == right_answer:
-            print(prompt.FEEDBACK_OK)
-            count_good_one += 1
-        else:
-            print(prompt.FEEDBACK_WRONG.format(right_answer))
-            if t < times - 1:
-                print(prompt.GOOD_LUCK)
-                count_bad_one += 1
+            w = Word(word)
+            right_answer = w.determine_type()
+
+            # user answer is "1", "2", "3 or "0"
+            user_answer_value = WORD_TYPE[user_answer]
+
+            if user_answer_value == right_answer:
+                print(prompt.FEEDBACK_OK)
+                count_good_one += 1
+            else:
+                print(prompt.FEEDBACK_WRONG.format(right_answer))
+                if t < times - 1:
+                    print(prompt.GOOD_LUCK)
+                    count_bad_one += 1
+
+        except AssertionError:
+            print(prompt.WRONG_INPUT_NUMBER)
 
 
 def do_i_write_accent(word, locale):

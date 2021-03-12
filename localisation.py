@@ -112,5 +112,17 @@ WHICH_SYLLABLE = {
 WHICH_WORD = {
     "en": "Give me a word you don't know how to write >> ",
     "es": "¿Qué palabra no sabe acentuar? >> ",
-    "nl": "Welk word wilt u weten? >> "
+    "nl": "Welk woord wilt u weten? >> "
     }
+
+WRONG_INPUT_NUMBER = {
+    "en": "You only have 3 kind of words in Spanish."
+          " \nUse 1 for aguda, 2 for llana and 3 for esdrújula."
+          " \nIf you don´t know type a 0",
+    "es": "Sólo hay tres tipos de palabras en español. "
+          "\nUse 1 para aguda, 2 para llana y 3 para esdrújula."
+          "\nSi no lo sabe, escriba 0>> ",
+    "nl": "Er zijn drie soort woorden in het Spaans."
+          "\nGebruik 1 voor aguda, 2 voor llana en 3 voor esdrújula"
+          "\nAls u het niet weet, typ dan een 0>> "
+}
