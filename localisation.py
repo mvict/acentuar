@@ -1,34 +1,34 @@
 ADVICE_YES = {
-    "en": "Yes, you should write an accent in syllable number {}.",
-    "es": "Sí, escriba un acento en la sílaba {}.",
-    "nl": "Ja, schrijf maar een accent op lettergreep {}."
+    "en": "Yes, you should write an accent in syllable number {}. ",
+    "es": "Sí, escriba un acento en la sílaba {}. ",
+    "nl": "Ja, schrijf maar een accent op lettergreep {}. "
     }
 
 ADVICE_NO = {
-    "en": "No accent needed, leave it like that:{}.",
-    "es": "No hace falta ningún acento. Déjela así: {}.",
-    "nl": "U hoeft geen accent te schrijven. Laat maar zo: {}."
+    "en": "No accent needed. \nLeave it like that:{}.",
+    "es": "No hace falta ningún acento. \nDéjela así: {}.",
+    "nl": "U hoeft geen accent te schrijven. \nLaat maar zo: {}."
     }
 
 AGUDAS_VOWEL_N_S = {
-    "en": "A 'aguda' word takes the accent if ends in vowel, 'n' or 's.'",
-    "es": "Las palabras agudas se acentúan si acaban en vocal, en 'n' o en 's'.",
-    "nl": "Aguda-woorden krijgen accent als ze met een klinker, 'n' or 's' eindigen."
+    "en": "\nA 'aguda' word takes the accent if ends in vowel, 'n' or 's.'",
+    "es": "\nLas palabras agudas se acentúan si acaban en vocal, en 'n' o en 's'.",
+    "nl": "\nAguda-woorden krijgen accent als ze met een klinker, 'n' or 's' eindigen."
     }
 
 AGUDAS_SOMETHING_ELSE = {
-    "en": "A 'aguda' word takes the accent if ends in vowel, 'n' or 's' and it's not the case.",
-    "es": "Las palabras agudas se acentúan si acaban en vocal, en 'n' o en 's' y este no es el caso.",
-    "nl": "Aguda-woorden krijgen accent slechts als ze met een klinker, 'n' or 's' eindigen."
+    "en": "\nA 'aguda' word takes the accent if ends in vowel, 'n' or 's' and it's not the case.",
+    "es": "\nLas palabras agudas se acentúan si acaban en vocal, en 'n' o en 's' y este no es el caso.",
+    "nl": "\nAguda-woorden krijgen accent slechts als ze met een klinker, 'n' or 's' eindigen."
     }
 
 ALL_ESDRUJULAS = {
-    "en": "All 'esdrújulas' words are written with accent.",
-    "es": "Todas las esdrújulas se acentúan.",
-    "nl": "Alle 'esdrújulas' krijgen een accent."
+    "en": "\nAll 'esdrújulas' words are written with accent.",
+    "es": "\nTodas las esdrújulas se acentúan.",
+    "nl": "\nAlle 'esdrújulas' krijgen een accent."
     }
 
-DIACRITIC_ALREADY_USE = {
+DIACRITIC_ALREADY_USED = {
     "en": "You already wrote an accent, please give me a word without diacritics.",
     "es": "Esta palabra ya está acentuada, inténtelo de nuevo",
     "nl": "Dit woord heeft al een accent, probeer het nog een keer"
@@ -80,21 +80,21 @@ HOW_MANY_TIMES = {
     }
 
 LLANAS_SOMETHING_ELSE = {
-    "en": "A 'llana' word takes the accent if it doesn't end in vowel, 'n' or 's'",
-    "es": "Las palabras llanas se acentúan si no acaban en vocal, en n o en s",
-    "nl": "Llana-woorden krijgen accent als ze niet met een klinker, 'n' or 's' eindigen"
+    "en": "\nA 'llana' word takes the accent if it doesn't end in vowel, 'n' or 's'",
+    "es": "\nLas palabras llanas se acentúan si no acaban en vocal, en n o en s",
+    "nl": "\nLlana-woorden krijgen accent als ze niet met een klinker, 'n' or 's' eindigen"
     }
 
 LLANAS_VOWEL_N_S = {
-    "en": "A 'llana' word takes the accent if it doesn't end in vowel, 'n' or 's'",
-    "es": "Las palabras llanas no se acentúan si acaban en vocal, en n o en s",
-    "nl": "Llana-woorden krijgen geen accent als ze met een klinker, 'n' or 's' eindigen"
+    "en": "\nA 'llana' word takes the accent if it doesn't end in vowel, 'n' or 's'",
+    "es": "\nLas palabras llanas no se acentúan si acaban en vocal, en n o en s",
+    "nl": "\nLlana-woorden krijgen geen accent als ze met een klinker, 'n' or 's' eindigen"
     }
 
 LIKE_THAT = {
-    "en": "Like that: {}",
-    "es": "Así: {}",
-    "nl": "Zo: {}"
+    "en": "\nLike that: {}.",
+    "es": "\nAsí: {}.",
+    "nl": "\nZo: {}."
     }
 
 SYLLABICATION_ERROR = {
@@ -121,8 +121,8 @@ WRONG_INPUT_NUMBER = {
           " \nIf you don´t know type a 0",
     "es": "Sólo hay tres tipos de palabras en español. "
           "\nUse 1 para aguda, 2 para llana y 3 para esdrújula."
-          "\nSi no lo sabe, escriba 0>> ",
+          "\nSi no lo sabe, escriba 0 ",
     "nl": "Er zijn drie soort woorden in het Spaans."
           "\nGebruik 1 voor aguda, 2 voor llana en 3 voor esdrújula"
-          "\nAls u het niet weet, typ dan een 0>> "
+          "\nAls u het niet weet, typ dan 0 "
 }

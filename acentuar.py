@@ -2,6 +2,7 @@ import argparse
 import random
 import pyphen
 import localisation as loc
+import sys
 
 
 VOWELS = ["a", "e", "i", "o", "u"]
@@ -29,7 +30,7 @@ class Localization:
         Mostly used for user interaction prompts.
     """
     def __init__(self, locale):
-        self.DIACRITIC_ALREADY_USE = loc.DIACRITIC_ALREADY_USE[locale]
+        self.DIACRITIC_ALREADY_USED = loc.DIACRITIC_ALREADY_USED[locale]
         self.FEEDBACK_OK = loc.FEEDBACK_OK[locale]
         self.FEEDBACK_WRONG = loc.FEEDBACK_WRONG[locale]
         self.GOOD_LUCK = loc.GOOD_LUCK[locale]
@@ -38,6 +39,7 @@ class Localization:
         self.WHICH_SYLLABLE = loc.WHICH_SYLLABLE[locale]
         self.WHICH_WORD = loc.WHICH_WORD[locale]
         self.WRONG_INPUT_NUMBER = loc.WRONG_INPUT_NUMBER[locale]
+
 
 class Word:
     def __init__(self, word):
@@ -239,6 +241,7 @@ def check_input_value(user_input):
             raise KeyError
     except KeyError:
         print(prompt.WRONG_INPUT_NUMBER)
+        sys.exit()
 
 
 def guess_the_type():
