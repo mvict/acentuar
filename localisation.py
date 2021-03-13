@@ -1,5 +1,4 @@
 ADVICE_YES = {
-<<<<<<< HEAD
     "en": "Yes, you should write an accent in syllable number {}.",
     "es": "Sí, escriba un acento en la sílaba {}.",
     "nl": "Ja, lettergreep {} heeft een accent."
@@ -28,36 +27,6 @@ ALL_ESDRUJULAS = {
     "es": "Todas las esdrújulas se acentúan.",
     "nl": "'Esdrújulas' hebben altijd een accent."
 }
-=======
-    "en": "Yes, you should write an accent in syllable number {}. ",
-    "es": "Sí, escriba un acento en la sílaba {}. ",
-    "nl": "Ja, schrijf maar een accent op lettergreep {}. "
-    }
-
-ADVICE_NO = {
-    "en": "No accent needed. \nLeave it like that:{}.",
-    "es": "No hace falta ningún acento. \nDéjela así: {}.",
-    "nl": "U hoeft geen accent te schrijven. \nLaat maar zo: {}."
-    }
-
-AGUDAS_VOWEL_N_S = {
-    "en": "\nA 'aguda' word takes the accent if ends in vowel, 'n' or 's.'",
-    "es": "\nLas palabras agudas se acentúan si acaban en vocal, en 'n' o en 's'.",
-    "nl": "\nAguda-woorden krijgen accent als ze met een klinker, 'n' or 's' eindigen."
-    }
-
-AGUDAS_SOMETHING_ELSE = {
-    "en": "\nA 'aguda' word takes the accent if ends in vowel, 'n' or 's' and it's not the case.",
-    "es": "\nLas palabras agudas se acentúan si acaban en vocal, en 'n' o en 's' y este no es el caso.",
-    "nl": "\nAguda-woorden krijgen accent slechts als ze met een klinker, 'n' or 's' eindigen."
-    }
-
-ALL_ESDRUJULAS = {
-    "en": "\nAll 'esdrújulas' words are written with accent.",
-    "es": "\nTodas las esdrújulas se acentúan.",
-    "nl": "\nAlle 'esdrújulas' krijgen een accent."
-    }
->>>>>>> 5a92aa1e58b9edfb0131d83f8d394fd2bf56d6b8
 
 DIACRITIC_ALREADY_USED = {
     "en": "You already wrote an accent, please give me a word without diacritics.",
