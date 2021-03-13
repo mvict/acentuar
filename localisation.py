@@ -1,4 +1,5 @@
 ADVICE_YES = {
+<<<<<<< HEAD
     "en": "Yes, you should write an accent in syllable number {}.",
     "es": "Sí, escriba un acento en la sílaba {}.",
     "nl": "Ja, lettergreep {} heeft een accent."
@@ -27,8 +28,38 @@ ALL_ESDRUJULAS = {
     "es": "Todas las esdrújulas se acentúan.",
     "nl": "'Esdrújulas' hebben altijd een accent."
 }
+=======
+    "en": "Yes, you should write an accent in syllable number {}. ",
+    "es": "Sí, escriba un acento en la sílaba {}. ",
+    "nl": "Ja, schrijf maar een accent op lettergreep {}. "
+    }
 
-DIACRITIC_ALREADY_USE = {
+ADVICE_NO = {
+    "en": "No accent needed. \nLeave it like that:{}.",
+    "es": "No hace falta ningún acento. \nDéjela así: {}.",
+    "nl": "U hoeft geen accent te schrijven. \nLaat maar zo: {}."
+    }
+
+AGUDAS_VOWEL_N_S = {
+    "en": "\nA 'aguda' word takes the accent if ends in vowel, 'n' or 's.'",
+    "es": "\nLas palabras agudas se acentúan si acaban en vocal, en 'n' o en 's'.",
+    "nl": "\nAguda-woorden krijgen accent als ze met een klinker, 'n' or 's' eindigen."
+    }
+
+AGUDAS_SOMETHING_ELSE = {
+    "en": "\nA 'aguda' word takes the accent if ends in vowel, 'n' or 's' and it's not the case.",
+    "es": "\nLas palabras agudas se acentúan si acaban en vocal, en 'n' o en 's' y este no es el caso.",
+    "nl": "\nAguda-woorden krijgen accent slechts als ze met een klinker, 'n' or 's' eindigen."
+    }
+
+ALL_ESDRUJULAS = {
+    "en": "\nAll 'esdrújulas' words are written with accent.",
+    "es": "\nTodas las esdrújulas se acentúan.",
+    "nl": "\nAlle 'esdrújulas' krijgen een accent."
+    }
+>>>>>>> 5a92aa1e58b9edfb0131d83f8d394fd2bf56d6b8
+
+DIACRITIC_ALREADY_USED = {
     "en": "You already wrote an accent, please give me a word without diacritics.",
     "es": "Esta palabra ya está acentuada, inténtelo de nuevo.",
     "nl": "Dit woord heeft al een accent, probeer het nog een keer."
@@ -104,8 +135,8 @@ SYLLABICATION_ERROR = {
 }
 
 WHICH_SYLLABLE = {
-    "en": "¿En qué sílaba se acentúa {}? ",
-    "es": "In which syllable does the emphasis fall in {}? ",
+    "es": "¿En qué sílaba se acentúa {}? ",
+    "en": "In which syllable does the emphasis fall in {}? ",
     "nl": "Op welk lettergreep valt de klemtoon in {}? "
 }
 
@@ -113,4 +144,16 @@ WHICH_WORD = {
     "en": "Give me a word you don't know how to write >> ",
     "es": "¿Qué palabra no sabe acentuar? >> ",
     "nl": "Met welk woord heb je hulp nodig? >> "
+}
+
+WRONG_INPUT_NUMBER = {
+    "en": "You only have 3 kind of words in Spanish."
+          " \nUse 1 for aguda, 2 for llana and 3 for esdrújula."
+          " \nIf you don´t know type a 0",
+    "es": "Sólo hay tres tipos de palabras en español. "
+          "\nUse 1 para aguda, 2 para llana y 3 para esdrújula."
+          "\nSi no lo sabe, escriba 0 ",
+    "nl": "Er zijn drie type woorden in het Spaans."
+          "\nGebruik 1 voor aguda, 2 voor llana en 3 voor esdrújula"
+          "\nType 0 als je het niet weet."
 }
