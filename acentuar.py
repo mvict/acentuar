@@ -3,11 +3,15 @@ import random
 import pyphen
 import localisation as loc
 import sys
+from re import match, compile
 
 
 VOWELS = ["a", "e", "i", "o", "u"]
 DIACRITICS = ["á", "é", "í", "ó", "ú"]
 N_OR_S = ["n", "s"]
+
+# locale will be overridden by args
+locale = "es"
 
 # dic to split in syllables
 dic = pyphen.Pyphen(lang='es_ES')
@@ -15,6 +19,11 @@ dic = pyphen.Pyphen(lang='es_ES')
 DICTIONARY = {"jamón": 1, "bolígrafo": 3, "esdrújula": 3, "salón": 1, "melón": 1, "excursión": 1,
               "césped": 2, "perro": 2, "gato": 2, "perdiz": 1, "equipo": 2
               }
+
+UNFAMILIAR_WORDS = ["cotiledón"]
+# , "origen", "margen", "pesquisa", "diptongo",
+#                     "caracteres", "márgenes", "orate", "vagido", "burdégano",
+#                     "sapenco"]
 
 WORDS_BAG = ["abarrotado", "colombia", "mueve", "abarrotes", "comadreja", "nubes", "abasto",
              "come", "nublado", "abeja", "como", "piojos", "pacto", "canal", "pactar", "sentir",
@@ -108,32 +117,32 @@ class Word:
 
         # if word is esdrujula
         if self._length >= 3 and self._is_esdrujula():
-            to_return = "esdrújula"
+            to_return = "3"
 
-        # If words ends with vowel
-        # example >> canto
+        # If words ends with vowel, the word is llana
+        # It is llana, example >> canto
         elif self.ends_with_vowel():
-            to_return = "llana"
+            to_return = "2"
 
         # If words ends with n or s
         elif self.ends_with_n_s():
-            # example >> camión
+            # It is aguda, example >> camión
             if self._has_diacritic_before():
-                to_return = "aguda"
-            # example >> carmen
+                to_return = "1"
+            # It is llana, example >> carmen
             else:
-                to_return = "llana"
+                to_return = "2"
 
         # if words ends with something else
         elif self.ends_with_something_else():
-            # example >> cóndor
+            # It is llana, example >> cóndor
             if self._diacritic_in_second_syllable():
-                to_return = "llana"
-            # example >> cantor
+                to_return = "2"
+            # It is aguda, example >> cantor
             else:
-                to_return = "aguda"
+                to_return = "1"
         else:
-            to_return = "aguda"
+            to_return = "1"
 
         return to_return
 
@@ -170,7 +179,8 @@ class AccentRules:
             print(self.EMPHASIS_EXPLANATION)
         else:
             # user input is 1, 2 or 3
-            self._estimated_type = WORD_TYPE[heard_accent]
+            # self._estimated_type = WORD_TYPE[heard_accent]
+            self._estimated_type = heard_accent
 
     def _write_accent(self, index):
         length, syllables = self.w.split_in_syllables()
@@ -196,25 +206,40 @@ class AccentRules:
         (word type, True if diatritic needed, word correct spelled, message)
         """
 
-        # syllable, write or not, new word
-        advice = ("", False, "0", "")
+        # word type, write or not, new word, explanation
+        diacritic = False
+        correct_form = ""
+        message = ""
 
-        if self._estimated_type == 'esdrújula':
-            advice = ('3', True, self._write_accent(3), self.ALL_ESDRUJULAS)
+        # esdrújula
+        if self._estimated_type == '3':
+            diacritic = True
+            correct_form = self._write_accent(3)
+            message = self.ALL_ESDRUJULAS
 
-        elif self._estimated_type == 'aguda':
+        # aguda
+        elif self._estimated_type == '1':
             if self.w.ends_with_vowel() or self.w.ends_with_n_s():
-                advice = ('1', True, self._write_accent(1), self.AGUDAS_VOWEL_N_S)
+                diacritic = True
+                correct_form = self._write_accent(1)
+                message = self.AGUDAS_VOWEL_N_S
             else:
-                advice = ('1', False, self.w.word, self.AGUDAS_SOMETHING_ELSE)
-
-        elif self._estimated_type == 'llana':
+                diacritic = False
+                correct_form = self.w.word
+                message = self.AGUDAS_SOMETHING_ELSE
+        # llana
+        elif self._estimated_type == '2':
             if self.w.ends_with_something_else():
-                advice = ('2', True, self._write_accent(2), self.LLANAS_SOMETHING_ELSE)
+                diacritic = True
+                correct_form = self._write_accent(2)
+                message = self.LLANAS_SOMETHING_ELSE
             else:
-                advice = ('2', False, self.w.word, self.LLANAS_VOWEL_N_S)
+                diacritic = False
+                correct_form = self.w.word
+                message = self.LLANAS_VOWEL_N_S
 
-        return advice
+        # return advice
+        return self._estimated_type, diacritic, correct_form, message
 
     def build_advice_prompt(self):
         sort, add_accent, correct_word, explanation = self._determine_written_accent()
@@ -264,14 +289,14 @@ def guess_the_type():
         w = Word(word)
         right_answer = w.determine_type()
 
-        # user answer is "1", "2", "3 or "0"
-        user_answer_value = WORD_TYPE[user_answer]
+        # user or system answer is "1", "2", "3 or "0"
+        right_answer_value = WORD_TYPE[right_answer]
 
-        if user_answer_value == right_answer:
+        if user_answer == right_answer:
             print(prompt.FEEDBACK_OK)
             count_good_one += 1
         else:
-            print(prompt.FEEDBACK_WRONG.format(right_answer))
+            print(prompt.FEEDBACK_WRONG.format(right_answer_value))
             if t < times - 1:
                 print(prompt.GOOD_LUCK)
                 count_bad_one += 1
@@ -288,7 +313,6 @@ def do_i_write_accent(word, locale):
         word_to_treat = input(prompt.WHICH_WORD)
     else:
         word_to_treat = word
-
     try:
         w = Word(word_to_treat)
 
@@ -310,18 +334,115 @@ def do_i_write_accent(word, locale):
         print(prompt.DIACRITIC_ALREADY_USED)
 
 
+def is_answer_yes(answer):
+    # possible answers are: yes, yeah, 1, ja
+    YES = compile(r"^[yY]([eE][(ah|AH)sS])|1|[jJ][aA]")
+    return YES.match(answer)
+
+
+def is_answer_no(answer):
+    # TODO localise with prompt
+    # No, Nee, no, nee, NEE, NO, nEE, nO or 0
+    NO = compile(r"((^[nN]([oO]|[eE]{2})$)|0)")
+    return NO.match(answer)
+    # return answer == "no"
+
+
+def clean_split_word(word_list):
+    show_word = []
+    for syllable in word_list:
+        for diacritic in DIACRITICS:
+            vowel_index = DIACRITICS.index(diacritic)
+            syllable = syllable.replace(diacritic, VOWELS[vowel_index])
+        show_word.append(syllable)
+    return show_word
+
+
+def clean_split_word1(word_list):
+    show_word = []
+    for syllable in word_list:
+        for diacritic in DIACRITICS:
+            if diacritic in syllable:
+                vowel_index = DIACRITICS.index(diacritic)
+                syllable = syllable.replace(diacritic, VOWELS[vowel_index])
+        show_word.append(syllable)
+    return show_word
+
+
+def clean_split_word2(word_list):
+    show_word = []
+    for syllable in word_list:
+        syllable = syllable.replace("á", "a")\
+                           .replace("é", "e")\
+                           .replace("í", "i")\
+                           .replace("ó", "o")\
+                           .replace("ú", "u")
+        show_word.append(syllable)
+    return show_word
+
+
+# TODO change parameters _ is not used
+def do_you_write_accent(_, locale):
+    # chose word for question
+    chosen_word = random.choice(list(UNFAMILIAR_WORDS))
+
+    # instantiate word
+    w = Word(chosen_word)
+
+    # determine word type: 2 llana, 1 aguda or 3 esdrújula
+    word_type = w.determine_type()
+
+    # split word in syllable
+    _, word_splitsing = w.split_in_syllables()
+
+    # determine write advice
+    # right_answer True if diacritic needed
+    explanation = AccentRules(w, word_type, locale)
+    _, right_answer, _, _ = explanation._determine_written_accent()
+
+    # hide diacritics to make question
+    cleaned_word = clean_split_word1(word_splitsing)
+    word_type = WORD_TYPE[word_type]
+    answer = input(f"If I tell you this word {cleaned_word} is {word_type}, will you write and accent?")
+
+    # user_answer initialisation
+    user_answer = False
+
+    # check user input
+    try:
+        if is_answer_yes(answer):
+            user_answer = True
+        elif is_answer_no(answer):
+            user_answer = False
+    except ValueError:
+        print ("wrong input say yes or no")
+
+    # primitive feedback
+    if right_answer == user_answer:
+        print("great")
+    else:
+        print("no, not really")
+
+
+
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='This program helps you how to use accents in Spanish')
+    parser = argparse.ArgumentParser(description='This program helps you how'
+                                                 ' to use accents in Spanish')
     parser.add_argument('-l', dest='locale', choices=['en', 'es', 'nl'], default="es",
                         help='The locale language the program will use (en, es, nl)')
     parser.add_argument('-w', dest='word', default="",
                         help='The word you want to consult')
     parser.add_argument('-guess', dest='users_choice', action='store_const',
                         const=guess_the_type, default=do_i_write_accent,
-                        help="-guess will run a program to train you in determining the accent\n"
-                             "otherwise you will be able to consult a word")
-
+                        help="-guess will run a program to train you "
+                             "in determining the word type,\notherwise you will"
+                             " be able to consult a word")
+    parser.add_argument('-learn', dest='users_choice', action='store_const',
+                        const=do_you_write_accent, default=do_i_write_accent,
+                        help="-learn will run a program to train you in "
+                              "determining the accent\n otherwise you will be "
+                             "able to consult a word")
     arguments = parser.parse_args()
 
     # locale` is by default Spanish but can be changed in cmd line

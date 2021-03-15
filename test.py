@@ -5,20 +5,20 @@ import acentuar
 class AcentuarTestCases(unittest.TestCase):
 
     def test_type_aguda(self):
-        types_dictionary = {"cantó": "aguda", "camión": "aguda", "cantor": "aguda"}
+        types_dictionary = {"cantó": "1", "camión": "1", "cantor": "1"}
         for word in types_dictionary:
             w = acentuar.Word(word)
             self.assertEqual(w.type, types_dictionary[word])
 
     def test_type_llana(self):
-        types_dictionary = {"canto": "llana", "cóndor": "llana", "carmen": "llana"}
+        types_dictionary = {"canto": "2", "cóndor": "2", "carmen": "2"}
 
         for word in types_dictionary:
             w = acentuar.Word(word)
             self.assertEqual(w.type, types_dictionary[word])
 
     def test_type_esdrujula(self):
-        types_dictionary = {"bolígrafo": "esdrújula"}
+        types_dictionary = {"bolígrafo": "3"}
 
         for word in types_dictionary:
             w = acentuar.Word(word)
