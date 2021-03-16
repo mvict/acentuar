@@ -20,10 +20,8 @@ DICTIONARY = {"jamón": 1, "bolígrafo": 3, "esdrújula": 3, "salón": 1, "meló
               "césped": 2, "perro": 2, "gato": 2, "perdiz": 1, "equipo": 2
               }
 
-UNFAMILIAR_WORDS = ["cotiledón"]
-# , "origen", "margen", "pesquisa", "diptongo",
-#                     "caracteres", "márgenes", "orate", "vagido", "burdégano",
-#                     "sapenco"]
+UNFAMILIAR_WORDS = ["cotiledón", "origen", "margen", "pesquisa", "diptongo", "caracteres", "márgenes",
+                    "orate", "vagido", "burdégano", "sapenco", "livógiro", "especimen", "lápiz"]
 
 WORDS_BAG = ["abarrotado", "colombia", "mueve", "abarrotes", "comadreja", "nubes", "abasto",
              "come", "nublado", "abeja", "como", "piojos", "pacto", "canal", "pactar", "sentir",
@@ -39,6 +37,7 @@ class Localization:
         Mostly used for user interaction prompts.
     """
     def __init__(self, locale):
+        self.ACCENT_OR_NOT = loc.ACCENT_OR_NOT[locale]
         self.DIACRITIC_ALREADY_USED = loc.DIACRITIC_ALREADY_USED[locale]
         self.FEEDBACK_OK = loc.FEEDBACK_OK[locale]
         self.FEEDBACK_WRONG = loc.FEEDBACK_WRONG[locale]
@@ -48,6 +47,7 @@ class Localization:
         self.WHICH_SYLLABLE = loc.WHICH_SYLLABLE[locale]
         self.WHICH_WORD = loc.WHICH_WORD[locale]
         self.WRONG_INPUT_NUMBER = loc.WRONG_INPUT_NUMBER[locale]
+        self.WRONG_INPUT_YESNO = loc.WRONG_INPUT_YESNO[locale]
 
 
 class Word:
@@ -198,7 +198,7 @@ class AccentRules:
         except IndexError:
             print(self.SYLLABICATION_ERROR)
 
-    def _determine_written_accent(self):
+    def determine_written_accent(self):
         """
         determines whether an accent should be written based
         on where the user hears the word emphasis
@@ -242,7 +242,7 @@ class AccentRules:
         return self._estimated_type, diacritic, correct_form, message
 
     def build_advice_prompt(self):
-        sort, add_accent, correct_word, explanation = self._determine_written_accent()
+        sort, add_accent, correct_word, explanation = self.determine_written_accent()
 
         if add_accent:
             return self.ADVICE_YES.format(sort) + self.LIKE_THAT.format(correct_word), explanation
@@ -292,6 +292,7 @@ def guess_the_type():
         # user or system answer is "1", "2", "3 or "0"
         right_answer_value = WORD_TYPE[right_answer]
 
+        # TODO unify feedback procedure with "do_you_write..."
         if user_answer == right_answer:
             print(prompt.FEEDBACK_OK)
             count_good_one += 1
@@ -335,17 +336,16 @@ def do_i_write_accent(word, locale):
 
 
 def is_answer_yes(answer):
+    # TODO localize in localisation.py
     # possible answers are: yes, yeah, 1, ja
-    YES = compile(r"^[yY]([eE][(ah|AH)sS])|1|[jJ][aA]")
-    return YES.match(answer)
+    yes = compile(r"^[yY]([eE][(ah|AH)sS])|1|[jJ][aA]|s[iIíÍ]")
+    return yes.match(answer)
 
 
 def is_answer_no(answer):
-    # TODO localise with prompt
+    # TODO localize in localisation.py
     # No, Nee, no, nee, NEE, NO, nEE, nO or 0
-    NO = compile(r"((^[nN]([oO]|[eE]{2})$)|0)")
-    return NO.match(answer)
-    # return answer == "no"
+    no = compile(r"((^[nN]([oO]|[eE]{2})$)|0)")
 
 
 def clean_split_word(word_list):
@@ -381,8 +381,7 @@ def clean_split_word2(word_list):
     return show_word
 
 
-# TODO change parameters _ is not used
-def do_you_write_accent(_, locale):
+def do_you_write_accent():
     # chose word for question
     chosen_word = random.choice(list(UNFAMILIAR_WORDS))
 
@@ -397,13 +396,14 @@ def do_you_write_accent(_, locale):
 
     # determine write advice
     # right_answer True if diacritic needed
+    # right now is locale a global variable, hummmm
     explanation = AccentRules(w, word_type, locale)
-    _, right_answer, _, _ = explanation._determine_written_accent()
+    _, right_answer, _, feedback = explanation.determine_written_accent()
 
-    # hide diacritics to make question
+    # hide diacritics, look type up and make a question
     cleaned_word = clean_split_word1(word_splitsing)
     word_type = WORD_TYPE[word_type]
-    answer = input(f"If I tell you this word {cleaned_word} is {word_type}, will you write and accent?")
+    answer = input(prompt.ACCENT_OR_NOT.format(cleaned_word, word_type))
 
     # user_answer initialisation
     user_answer = False
@@ -414,15 +414,17 @@ def do_you_write_accent(_, locale):
             user_answer = True
         elif is_answer_no(answer):
             user_answer = False
+        else:
+            raise ValueError
     except ValueError:
-        print ("wrong input say yes or no")
+        print(prompt.WRONG_INPUT_YESNO)
+        sys.exit()
 
     # primitive feedback
     if right_answer == user_answer:
-        print("great")
+        print(prompt.FEEDBACK_OK)
     else:
-        print("no, not really")
-
+        print(prompt.FEEDBACK_WRONG.format(word_type), feedback)
 
 
 if __name__ == "__main__":
@@ -454,9 +456,11 @@ if __name__ == "__main__":
     function_to_call = arguments.users_choice
     word_to_process = arguments.word
 
-    # guess_the_type doesn't take parameters
-    if function_to_call == guess_the_type:
-        function_to_call()
-    # do_i_write_accent takes 2 args: word_to_process (by default ""), and locale
-    else:
+    # do_i_write_accent takes 2 args: word_to_process (by default "") and locale
+    # TODO
+    if function_to_call == do_i_write_accent:
         function_to_call(word_to_process, locale)
+
+    # do_you_write_an_accent and guess_the_type don't take parameters
+    else:
+        function_to_call()

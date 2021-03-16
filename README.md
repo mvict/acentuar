@@ -15,6 +15,11 @@ Workspace to learn how to use diacritics in Spanish
      by calling do_i_write_accent("")
      This is the fastest way to get your answer
 
+     python acentuar.py -learn
+     It will call do_you_write_an_accent()
+     It will ask you to determine whether an unusual word needs accent or not
+     and will give you feedback about your answer
+
 ##### UI language
 LOCALE is by default Spanish but can be changed in cmd line
 

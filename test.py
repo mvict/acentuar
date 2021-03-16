@@ -34,7 +34,7 @@ class AcentuarTestCases(unittest.TestCase):
             print(f"word {key} accent {value}")
             k = acentuar.Word(key)
             acentuation = acentuar.AccentRules(k, value, "es")
-            advice, _, _, _ = acentuation._determine_written_accent()
+            advice, _, _, _ = acentuation.determine_written_accent()
             self.assertEqual(advice, value)
 
     def test_pyphen(self):

@@ -1,3 +1,9 @@
+ACCENT_OR_NOT = {
+    "en": "If I tell you {} is {}, will you write and accent? >> ",
+    "es": "Si te digo que {} es {}, ¿escribirías un acento? >> ",
+    "nl": "Als ik je vertel dat {} {} is, zou je een accent er op schrijven?"
+}
+
 ADVICE_YES = {
     "en": "Yes, you should write an accent in syllable number {}. ",
     "es": "Sí, escriba un acento en la sílaba {}. ",
@@ -125,4 +131,10 @@ WRONG_INPUT_NUMBER = {
     "nl": "Er zijn drie soort woorden in het Spaans."
           "\nGebruik 1 voor aguda, 2 voor llana en 3 voor esdrújula"
           "\nAls u het niet weet, typ dan 0 "
+}
+
+WRONG_INPUT_YESNO = {
+    "en": "Wrong input, please write yes or no",
+    "es": "Su respuesta no es válida Escriba sí o no.",
+    "nl": "Invoer moet 'ja' of 'nee' zijn"
 }
