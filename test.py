@@ -46,6 +46,21 @@ class AcentuarTestCases(unittest.TestCase):
         w = acentuar.Word("experiencia")
         self.assertEqual(w._is_esdrujula(), False)
 
+    def test_yes(self):
+        yes = ["yes", "YES", "JA", "ja", "sí", "si", "yeah", "y",]
+
+        for y in yes:
+            print(y)
+            self.assertTrue(acentuar.is_answer_yes(y))
+
+    def test_no(self):
+        no = ["n", "no", "NO", "nee", "NEE", "0"]
+
+        for n in no:
+            print(n)
+            self.assertTrue(acentuar.is_answer_no(n))
+
+
 
 if __name__ == '__main__':
     unittest.main()

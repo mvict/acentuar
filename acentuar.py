@@ -338,15 +338,15 @@ def do_i_write_accent(word, locale):
 def is_answer_yes(answer):
     # TODO localize in localisation.py
     # possible answers are: yes, yeah, 1, ja
-    yes = compile(r"^[yY]([eE][(ah|AH)sS])|1|[jJ][aA]|s[iIíÍ]")
+    yes = compile(r"^[yY]([eE][(ah|AH)sS])?|1|[jJ][aA]|s[iIíÍ]")
     return yes.match(answer)
 
 
 def is_answer_no(answer):
     # TODO localize in localisation.py
-    # No, Nee, no, nee, NEE, NO, nEE, nO or 0
-    no = compile(r"((^[nN]([oO]|[eE]{2})$)|0)")
-
+    # n, N No, Nee, no, nee, NEE, NO, nEE, nO or 0
+    no = compile(r"(^[nN]([oO]|[eE]{2})?|0)")
+    return no.match(answer)
 
 def clean_split_word(word_list):
     show_word = []
@@ -405,9 +405,6 @@ def do_you_write_accent():
     word_type = WORD_TYPE[word_type]
     answer = input(prompt.ACCENT_OR_NOT.format(cleaned_word, word_type))
 
-    # user_answer initialisation
-    user_answer = False
-
     # check user input
     try:
         if is_answer_yes(answer):
@@ -420,7 +417,7 @@ def do_you_write_accent():
         print(prompt.WRONG_INPUT_YESNO)
         sys.exit()
 
-    # primitive feedback
+    # feedback to user
     if right_answer == user_answer:
         print(prompt.FEEDBACK_OK)
     else:
