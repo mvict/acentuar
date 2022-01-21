@@ -1,6 +1,12 @@
 # acentuar
 Workspace to learn how to use diacritics in Spanish
 
+### Virtual environment
+Para activar el virtual environment 
+
+Abrir una powershell en la terminal y 
+    & d:/git/acentuar/venv/Scripts/Activate.ps1
+
 ##### Usage
      python acentuar.py -guess
      It will call guess_the_type()
@@ -36,6 +42,7 @@ LOCALE is by default Spanish but can be changed in cmd line
   * 'solo' or 'sólo', 'esta' or 'ésta'
 * replace WORDS_BAG with data out nltk corpus or scrapped out the internet
 * convert into package
+* chose how many times you want to practice with -learn
 
 
 ##### about using Hunspell dictionaries

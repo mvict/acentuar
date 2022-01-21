@@ -135,6 +135,6 @@ WRONG_INPUT_NUMBER = {
 
 WRONG_INPUT_YESNO = {
     "en": "Wrong input, please write yes or no",
-    "es": "Su respuesta no es válida Escriba sí o no.",
+    "es": "Su respuesta no es válida. Escriba sí o no.",
     "nl": "Invoer moet 'ja' of 'nee' zijn"
 }

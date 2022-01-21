@@ -426,8 +426,8 @@ def do_you_write_accent():
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='This program helps you how'
-                                                 ' to use accents in Spanish')
+    parser = argparse.ArgumentParser(description='This program helps you'
+                                                 ' with Spanish accents')
     parser.add_argument('-l', dest='locale', choices=['en', 'es', 'nl'], default="es",
                         help='The locale language the program will use (en, es, nl)')
     parser.add_argument('-w', dest='word', default="",
